@@ -1,0 +1,25 @@
+{
+  "name": "otus-js-aqa",
+  "version": "1.0.0",
+  "description": "Создано в рамках курса OTUS JavaScript QA Engineer",
+  "main": "index.js",
+  "scripts": {
+    "lint:ci": "prettier . --check",
+    "lint": "prettier . --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/irina-miroshnikova/otus-js-aqa.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/irina-miroshnikova/otus-js-aqa/issues"
+  },
+  "homepage": "https://github.com/irina-miroshnikova/otus-js-aqa#readme",
+  "devDependencies": {
+    "prettier": "^3.9.10"
+  }
+}
