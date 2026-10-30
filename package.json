@@ -6,7 +6,7 @@
   "scripts": {
     "lint:ci": "prettier . --check",
     "lint": "prettier . --write",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,9 @@
   },
   "homepage": "https://github.com/irina-miroshnikova/otus-js-aqa#readme",
   "devDependencies": {
+    "@babel/core": "^7.29.7",
+    "@babel/preset-env": "^7.29.7",
+    "babel-jest": "^30.5.2",
     "jest": "^30.5.2",
     "prettier": "^3.9.10"
   }
