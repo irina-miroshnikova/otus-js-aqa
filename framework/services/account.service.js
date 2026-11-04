@@ -34,17 +34,6 @@ const AccountService = {
     })
   },
 
-  authorized(user) {
-    return fetch(`${config.baseUrl}/Account/v1/Authorized`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
-  },
-
   getUser(userId, user) {
     const credentials = Buffer.from(`${user.userName}:${user.password}`).toString('base64')
 
