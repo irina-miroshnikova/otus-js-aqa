@@ -47,16 +47,15 @@ describe('Bookstore API', () => {
 
     const body = await response.json()
 
-    if (response.status === 201) {
-      usersToDelete.push({
-        userId: body.userID,
-        userName: user.userName,
-        password: user.password
-      })
-    }
-
     // Assert — проверки
     expect(response.status).toBe(201)
+
+    usersToDelete.push({
+      userId: body.userID,
+      userName: user.userName,
+      password: user.password
+    })
+
     expect(body.userID).toEqual(expect.any(String))
     expect(body.userID).not.toBe('')
     expect(body.username).toBe(user.userName)
@@ -82,15 +81,13 @@ describe('Bookstore API', () => {
     })
     const createdUser = await createResponse.json()
 
-    if (createResponse.status === 201) {
-      usersToDelete.push({
-        userId: createdUser.userID,
-        userName: user.userName,
-        password: user.password
-      })
-    }
-
     expect(createResponse.status).toBe(201)
+
+    usersToDelete.push({
+      userId: createdUser.userID,
+      userName: user.userName,
+      password: user.password
+    })
 
     // Act — повторное создание того же пользователя
     const response = await fetch(`${baseUrl}/Account/v1/User`, {
@@ -127,17 +124,16 @@ describe('Bookstore API', () => {
 
     const createdUser = await createResponse.json()
 
-    if (createResponse.status === 201) {
-      usersToDelete.push({
-        userId: createdUser.userID,
-        userName: user.userName,
-        password: user.password
-      })
-    }
-
     expect(createResponse.status).toBe(201)
 
+    usersToDelete.push({
+      userId: createdUser.userID,
+      userName: user.userName,
+      password: user.password
+    })
+
     // Act — получение токена
+
     const response = await fetch(`${baseUrl}/Account/v1/GenerateToken`, {
       method: 'POST',
       headers,
@@ -175,14 +171,13 @@ describe('Bookstore API', () => {
     })
     const createdUser = await createResponse.json()
 
-    if (createResponse.status === 201) {
-      usersToDelete.push({
-        userId: createdUser.userID,
-        userName: user.userName,
-        password: user.password
-      })
-    }
     expect(createResponse.status).toBe(201)
+
+    usersToDelete.push({
+      userId: createdUser.userID,
+      userName: user.userName,
+      password: user.password
+    })
 
     // Act — запрос токена с неправильным паролем
     const response = await fetch(`${baseUrl}/Account/v1/GenerateToken`, {
