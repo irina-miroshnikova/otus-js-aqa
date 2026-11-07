@@ -1,4 +1,5 @@
-const baseUrl = 'https://bookstore.demoqa.com'
+import config from '../framework/config/config.js'
+import AccountService from '../framework/services/account.service.js'
 
 describe('Bookstore API', () => {
   const usersToDelete = []
@@ -11,14 +12,7 @@ describe('Bookstore API', () => {
     }
 
     // Act — действие
-    const response = await fetch(`${baseUrl}/Account/v1/User`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
+    const response = await AccountService.createUser(user)
 
     const body = await response.json()
 
@@ -32,18 +26,11 @@ describe('Bookstore API', () => {
     // Arrange — подготовка
     const user = {
       userName: `otus_success_${Date.now()}`,
-      password: 'OtusTest!2026'
+      password: config.password
     }
 
     // Act — действие
-    const response = await fetch(`${baseUrl}/Account/v1/User`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
+    const response = await AccountService.createUser(user)
 
     const body = await response.json()
 
@@ -66,19 +53,10 @@ describe('Bookstore API', () => {
     // Arrange — подготовка
     const user = {
       userName: `otus_duplicate_${Date.now()}`,
-      password: 'OtusTest!2026'
+      password: config.password
     }
 
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    }
-
-    const createResponse = await fetch(`${baseUrl}/Account/v1/User`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(user)
-    })
+    const createResponse = await AccountService.createUser(user)
     const createdUser = await createResponse.json()
 
     expect(createResponse.status).toBe(201)
@@ -90,11 +68,7 @@ describe('Bookstore API', () => {
     })
 
     // Act — повторное создание того же пользователя
-    const response = await fetch(`${baseUrl}/Account/v1/User`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(user)
-    })
+    const response = await AccountService.createUser(user)
 
     const body = await response.json()
 
@@ -108,20 +82,10 @@ describe('Bookstore API', () => {
     // Arrange — подготовка
     const user = {
       userName: `otus_token_${Date.now()}`,
-      password: 'OtusTest!2026'
+      password: config.password
     }
 
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    }
-
-    const createResponse = await fetch(`${baseUrl}/Account/v1/User`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(user)
-    })
-
+    const createResponse = await AccountService.createUser(user)
     const createdUser = await createResponse.json()
 
     expect(createResponse.status).toBe(201)
@@ -134,11 +98,7 @@ describe('Bookstore API', () => {
 
     // Act — получение токена
 
-    const response = await fetch(`${baseUrl}/Account/v1/GenerateToken`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(user)
-    })
+    const response = await AccountService.generateToken(user)
 
     const body = await response.json()
 
@@ -156,19 +116,10 @@ describe('Bookstore API', () => {
     // Arrange — подготовка
     const user = {
       userName: `otus_invalid_token_${Date.now()}`,
-      password: 'OtusTest!2026'
+      password: config.password
     }
 
-    const headers = {
-      'Content-Type': 'application/json',
-      Accept: 'application/json'
-    }
-
-    const createResponse = await fetch(`${baseUrl}/Account/v1/User`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(user)
-    })
+    const createResponse = await AccountService.createUser(user)
     const createdUser = await createResponse.json()
 
     expect(createResponse.status).toBe(201)
@@ -180,15 +131,10 @@ describe('Bookstore API', () => {
     })
 
     // Act — запрос токена с неправильным паролем
-    const response = await fetch(`${baseUrl}/Account/v1/GenerateToken`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        userName: user.userName,
-        password: 'WrongPassword!2026'
-      })
+    const response = await AccountService.generateToken({
+      userName: user.userName,
+      password: 'WrongPassword!2026'
     })
-
     const body = await response.json()
 
     // Assert — проверки
@@ -198,21 +144,108 @@ describe('Bookstore API', () => {
     expect(body.token).toBeNull()
     expect(body.expires).toBeNull()
   }, 15000)
+  test('Authorized - Success', async () => {
+    // Arrange — подготовка пользователя
+    const user = {
+      userName: `${config.userName}_authorized_${Date.now()}`,
+      password: config.password
+    }
+
+    const createResponse = await AccountService.createUser(user)
+    expect(createResponse.status).toBe(201)
+
+    const createdUser = await createResponse.json()
+
+    usersToDelete.push({
+      userId: createdUser.userID,
+      userName: user.userName,
+      password: user.password
+    })
+
+    const tokenResponse = await AccountService.generateToken(user)
+    expect(tokenResponse.status).toBe(200)
+
+    const tokenBody = await tokenResponse.json()
+    expect(tokenBody.status).toBe('Success')
+    expect(tokenBody.token).toEqual(expect.any(String))
+    expect(tokenBody.token).not.toBe('')
+
+    // Act — проверка авторизации
+    const response = await AccountService.authorized(user)
+
+    // Assert — проверки
+    expect(response.status).toBe(200)
+
+    const body = await response.json()
+    expect(body).toBe(true)
+  }, 15000)
+  test('Get User - Success', async () => {
+    // Arrange — подготовка пользователя
+    const user = {
+      userName: `${config.userName}_get_${Date.now()}`,
+      password: config.password
+    }
+
+    const createResponse = await AccountService.createUser(user)
+    expect(createResponse.status).toBe(201)
+
+    const createdUser = await createResponse.json()
+
+    usersToDelete.push({
+      userId: createdUser.userID,
+      userName: user.userName,
+      password: user.password
+    })
+
+    // Act — получение пользователя
+    const response = await AccountService.getUser(createdUser.userID, user)
+
+    // Assert — проверки
+    expect(response.status).toBe(200)
+
+    const body = await response.json()
+    expect(body.userId).toBe(createdUser.userID)
+    expect(body.username).toBe(user.userName)
+    expect(body.books).toEqual([])
+  }, 15000)
+  test('Delete User - Success', async () => {
+    // Arrange — подготовка пользователя
+    const user = {
+      userName: `${config.userName}_delete_${Date.now()}`,
+      password: config.password
+    }
+
+    const createResponse = await AccountService.createUser(user)
+    expect(createResponse.status).toBe(201)
+
+    const createdUser = await createResponse.json()
+
+    const cleanupUser = {
+      userId: createdUser.userID,
+      userName: user.userName,
+      password: user.password
+    }
+
+    usersToDelete.push(cleanupUser)
+
+    // Act — удаление пользователя
+    const response = await AccountService.deleteUser(createdUser.userID, user)
+
+    // Assert — проверки
+    expect(response.status).toBe(204)
+
+    // Пользователь уже удалён — повторная очистка не нужна
+    usersToDelete.splice(usersToDelete.indexOf(cleanupUser), 1)
+
+    expect(await response.text()).toBe('')
+  }, 15000)
 
   afterAll(async () => {
     const cleanupErrors = []
 
     for (const user of usersToDelete) {
       try {
-        const credentials = Buffer.from(`${user.userName}:${user.password}`).toString('base64')
-
-        const response = await fetch(`${baseUrl}/Account/v1/User/${user.userId}`, {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Basic ${credentials}`
-          },
-          signal: AbortSignal.timeout(5000)
-        })
+        const response = await AccountService.deleteUser(user.userId, user)
 
         if (response.status !== 204) {
           cleanupErrors.push(`${user.userName}: HTTP ${response.status}`)
