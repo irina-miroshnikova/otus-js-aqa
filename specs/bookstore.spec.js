@@ -1,6 +1,13 @@
 import config from '../framework/config/config.js'
+import bookSchema from '../framework/schemas/book.schema.js'
 import AccountService from '../framework/services/account.service.js'
 import BookStoreService from '../framework/services/bookstore.service.js'
+import Ajv from 'ajv'
+import addFormats from 'ajv-formats'
+
+const ajv = new Ajv()
+addFormats(ajv)
+const validateBook = ajv.compile(bookSchema)
 
 describe('BookStore API', () => {
   test('Add Book - Success', async () => {
@@ -148,9 +155,20 @@ describe('BookStore API', () => {
       expect(response.status).toBe(200)
 
       const book = await response.json()
+      const isValid = validateBook(book)
+      expect(isValid).toBe(true)
       expect(book.isbn).toBe(isbn)
       expect(book.title).toBe(title)
     },
     15000
   )
+  test.each([
+    { field: 'pages', value: '234', keyword: 'type' },
+    { field: 'publish_date', value: 'not-a-date', keyword: 'format' }
+  ])('Book response schema rejects invalid $field', ({ field, value, keyword }) => {
+    const invalidBook = { isbn: '9781449325862', title: 'Git Pocket Guide', [field]: value }
+
+    expect(validateBook(invalidBook)).toBe(false)
+    expect(validateBook.errors).toMatchObject([{ instancePath: `/${field}`, keyword }])
+  })
 })
