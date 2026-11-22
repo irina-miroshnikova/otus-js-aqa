@@ -1,10 +1,13 @@
-import config from '../framework/config/config.js'
-import bookSchema from '../framework/schemas/book.schema.js'
-import AccountService from '../framework/services/account.service.js'
-import BookStoreService from '../framework/services/bookstore.service.js'
+import { describe, expect, test } from '@jest/globals'
+import config from '../framework/config/config.ts'
+import bookSchema from '../framework/schemas/book.schema.ts'
+import AccountService from '../framework/services/account.service.ts'
+import BookStoreService from '../framework/services/bookstore.service.ts'
 import Ajv from 'ajv'
 import addFormats from 'ajv-formats'
-
+type UserProfile = {
+  books: { isbn: string }[]
+}
 const ajv = new Ajv()
 addFormats(ajv)
 const validateBook = ajv.compile(bookSchema)
@@ -42,7 +45,7 @@ describe('BookStore API', () => {
       const profileResponse = await AccountService.getUser(userId, user)
       expect(profileResponse.status).toBe(200)
 
-      const profile = await profileResponse.json()
+      const profile: UserProfile = await profileResponse.json()
       const isbns = profile.books.map(book => book.isbn)
       expect(isbns).toContain(isbn)
     } finally {
@@ -88,7 +91,7 @@ describe('BookStore API', () => {
       const profileResponse = await AccountService.getUser(userId, user)
       expect(profileResponse.status).toBe(200)
 
-      const profile = await profileResponse.json()
+      const profile: UserProfile = await profileResponse.json()
       const isbns = profile.books.map(book => book.isbn)
       expect(isbns).toEqual([newIsbn])
     } finally {

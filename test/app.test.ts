@@ -1,5 +1,5 @@
 import { describe, test, expect } from '@jest/globals'
-import { fullTrim, nameIsValid, getTotal } from '../src/app.js'
+import { fullTrim, nameIsValid, getTotal } from '../src/app.ts'
 
 describe('fullTrim', () => {
   test('удаляет пробелы в начале, внутри и в конце строки', () => {
@@ -67,6 +67,7 @@ describe('getTotal', () => {
     const expected = 350
 
     // Act
+
     const result = getTotal(items)
 
     // Assert
@@ -104,6 +105,7 @@ describe('getTotal — проверка скидки', () => {
     const discount = '10'
 
     // Act + Assert
+    // @ts-expect-error Намеренно передаём скидку строкой.
     expect(() => getTotal(items, discount)).toThrow('Скидка должна быть числом')
   })
 

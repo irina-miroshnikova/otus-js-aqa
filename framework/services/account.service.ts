@@ -1,7 +1,12 @@
-import config from '../config/config.js'
+import config from '../config/config.ts'
+
+export type UserCredentials = {
+  userName: string
+  password: string
+}
 
 const AccountService = {
-  createUser(user) {
+  createUser(user: UserCredentials) {
     return fetch(`${config.baseUrl}/Account/v1/User`, {
       method: 'POST',
       headers: {
@@ -12,7 +17,7 @@ const AccountService = {
     })
   },
 
-  generateToken(user) {
+  generateToken(user: UserCredentials) {
     return fetch(`${config.baseUrl}/Account/v1/GenerateToken`, {
       method: 'POST',
       headers: {
@@ -23,7 +28,7 @@ const AccountService = {
     })
   },
 
-  authorized(user) {
+  authorized(user: UserCredentials) {
     return fetch(`${config.baseUrl}/Account/v1/Authorized`, {
       method: 'POST',
       headers: {
@@ -34,7 +39,7 @@ const AccountService = {
     })
   },
 
-  getUser(userId, user) {
+  getUser(userId: string, user: UserCredentials) {
     const credentials = Buffer.from(`${user.userName}:${user.password}`).toString('base64')
 
     return fetch(`${config.baseUrl}/Account/v1/User/${userId}`, {
@@ -47,7 +52,7 @@ const AccountService = {
     })
   },
 
-  deleteUser(userId, user) {
+  deleteUser(userId: string, user: UserCredentials) {
     const credentials = Buffer.from(`${user.userName}:${user.password}`).toString('base64')
 
     return fetch(`${config.baseUrl}/Account/v1/User/${userId}`, {
