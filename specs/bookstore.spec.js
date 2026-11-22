@@ -171,4 +171,19 @@ describe('BookStore API', () => {
     expect(validateBook(invalidBook)).toBe(false)
     expect(validateBook.errors).toMatchObject([{ instancePath: `/${field}`, keyword }])
   })
+  test('Book response schema rejects additional properties', () => {
+    const invalidBook = {
+      isbn: '9781449325862',
+      title: 'Git Pocket Guide',
+      rating: 5
+    }
+
+    expect(validateBook(invalidBook)).toBe(false)
+    expect(validateBook.errors).toMatchObject([
+      {
+        keyword: 'additionalProperties',
+        params: { additionalProperty: 'rating' }
+      }
+    ])
+  })
 })

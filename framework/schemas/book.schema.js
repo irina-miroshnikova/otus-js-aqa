@@ -1,5 +1,6 @@
 const bookSchema = {
   type: 'object',
+  additionalProperties: false,
   properties: {
     isbn: { type: 'string' },
     title: { type: 'string' },
