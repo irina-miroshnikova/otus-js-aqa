@@ -1,9 +1,11 @@
-import config from '../framework/config/config.js'
-import AccountService from '../framework/services/account.service.js'
+import { afterAll, describe, expect, test } from '@jest/globals'
+import config from '../framework/config/config.ts'
+import AccountService, { type UserCredentials } from '../framework/services/account.service.ts'
+
+type UserToDelete = UserCredentials & { userId: string }
 
 describe('Bookstore API', () => {
-  const usersToDelete = []
-
+  const usersToDelete: UserToDelete[] = []
   test('Create User - Invalid Password', async () => {
     // Arrange — подготовка
     const user = {
@@ -251,7 +253,8 @@ describe('Bookstore API', () => {
           cleanupErrors.push(`${user.userName}: HTTP ${response.status}`)
         }
       } catch (error) {
-        cleanupErrors.push(`${user.userName}: ${error.message}`)
+        const message = error instanceof Error ? error.message : String(error)
+        cleanupErrors.push(`${user.userName}: ${message}`)
       }
     }
 

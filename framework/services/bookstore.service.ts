@@ -1,7 +1,7 @@
-import config from '../config/config.js'
+import config from '../config/config.ts'
 
 const BookStoreService = {
-  replaceBook(userId, oldIsbn, newIsbn, token) {
+  replaceBook(userId: string, oldIsbn: string, newIsbn: string, token: string) {
     const url = `${config.baseUrl}/BookStore/v1/Books/${encodeURIComponent(oldIsbn)}`
 
     return fetch(url, {
@@ -14,7 +14,7 @@ const BookStoreService = {
       body: JSON.stringify({ userId, isbn: newIsbn })
     })
   },
-  getBook(isbn) {
+  getBook(isbn: string) {
     const url = `${config.baseUrl}/BookStore/v1/Book?ISBN=${encodeURIComponent(isbn)}`
 
     return fetch(url, {
@@ -22,7 +22,7 @@ const BookStoreService = {
       headers: { Accept: 'application/json' }
     })
   },
-  deleteBook(userId, isbn, token) {
+  deleteBook(userId: string, isbn: string, token: string) {
     return fetch(`${config.baseUrl}/BookStore/v1/Book`, {
       method: 'DELETE',
       headers: {
@@ -33,7 +33,7 @@ const BookStoreService = {
       body: JSON.stringify({ userId, isbn })
     })
   },
-  addBook(userId, isbn, token) {
+  addBook(userId: string, isbn: string, token: string) {
     return fetch(`${config.baseUrl}/BookStore/v1/Books`, {
       method: 'POST',
       headers: {

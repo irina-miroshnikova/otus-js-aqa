@@ -3,16 +3,19 @@
  * @param {string} name
  * @returns {boolean}
  */
-export const nameIsValid = name => typeof name === 'string' && name.length >= 2 && /^[a-z]+$/.test(name)
-
+export const nameIsValid = (name: unknown) => typeof name === 'string' && name.length >= 2 && /^[a-z]+$/.test(name)
 /**
  * Удаление пробелов из строки
  *
  * @param {string} text
  * @returns {string}
  */
-export const fullTrim = text => (text ?? '').replace(/\s+/g, '')
-
+export const fullTrim = (text?: string | null) => (text ?? '').replace(/\s+/g, '')
+type OrderItem = {
+  quantity: number
+  price: number
+  name?: string
+}
 /**
  * Подсчёт суммы заказа
  *
@@ -27,7 +30,7 @@ export const fullTrim = text => (text ?? '').replace(/\s+/g, '')
  * @example getTotal([{ price: 10, quantity: 10 }], 10) // 90
  * @example getTotal([{ price: 10, quantity: 10 }], 100) // 0
  */
-export const getTotal = (items = [], discount = 0) => {
+export const getTotal = (items: OrderItem[] = [], discount = 0) => {
   if (typeof discount !== 'number') {
     throw new Error('Скидка должна быть числом')
   }
@@ -45,7 +48,7 @@ export const getTotal = (items = [], discount = 0) => {
  * @returns {number} Сумма баллов.
  * @example getScore({ Anna: 10, Olga: 1, Ivan: 5 }) // 16
  */
-export const getScore = scores => {
+export const getScore = (scores: Record<string, number>) => {
   let total = 0
 
   for (const nickname in scores) {
