@@ -3,5 +3,6 @@ export default {
   transform: {
     '^.+\\.js$': 'babel-jest'
   },
-  clearMocks: true
+  clearMocks: true,
+  reporters: ['default', ['jest-html-reporters', { publicPath: './reports', filename: 'report.html' }]]
 }

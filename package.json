@@ -27,6 +27,7 @@
     "ajv-formats": "^3.0.1",
     "babel-jest": "^30.5.2",
     "jest": "^30.5.2",
+    "jest-html-reporters": "^3.1.7",
     "prettier": "^3.9.10"
   }
 }
